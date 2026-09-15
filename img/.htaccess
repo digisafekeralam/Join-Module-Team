@@ -1,0 +1,5 @@
+# Never execute PHP from the image folder, even if a script gets uploaded here.
+<FilesMatch "\.(php|phtml|php\d|pht)$">
+    Require all denied
+</FilesMatch>
+Options -Indexes
