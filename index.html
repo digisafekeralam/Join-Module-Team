@@ -21,8 +21,9 @@
         .logo-text { font-family: var(--font-heading); font-weight: 700; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .accent { background: var(--gradient-warm); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         textarea { resize: none; overflow-y: hidden; }
-        #form-status-inline { display:none; margin-bottom:1rem; font-size:1rem; line-height:1.5; }
+        #form-status-inline { display:none; margin:0; padding:2rem 1.5rem; text-align:center; font-size:1rem; line-height:1.6; }
         #form-status-inline.visible { display:block; }
+        #application-form.success-state > *:not(#form-status-inline) { display:none !important; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-500 selection:text-white">
@@ -512,7 +513,7 @@
       function closeConfirmation() { confirmationModal.classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
       confirmationClose.addEventListener('click', closeConfirmation);
       confirmationModal.addEventListener('click', (event) => { if (event.target === confirmationModal) closeConfirmation(); });
-      function showStatus(message, success) { const cls = success ? 'bg-emerald-100 border border-emerald-300 text-emerald-900' : 'bg-red-100 border border-red-300 text-red-900'; statusBox.textContent = message; statusBox.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] max-w-xl w-[calc(100%-2rem)] rounded-2xl px-5 py-4 text-sm font-semibold shadow-2xl ' + (success ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'); inlineStatus.textContent = message; inlineStatus.className = 'visible rounded-2xl px-5 py-4 text-sm font-semibold ' + cls; if (success) { confirmationMessage.textContent = message; confirmationModal.classList.remove('hidden'); document.body.classList.add('overflow-hidden'); confirmationClose.focus(); } else { inlineStatus.scrollIntoView({behavior:'smooth',block:'center'}); } }
+      function showStatus(message, success) { const cls = success ? 'bg-emerald-50 border-2 border-emerald-300 text-emerald-900' : 'bg-red-100 border border-red-300 text-red-900'; statusBox.textContent = message; statusBox.className = 'hidden'; inlineStatus.textContent = message; inlineStatus.className = 'visible rounded-2xl px-5 py-5 text-sm font-semibold ' + cls; if (success) { form.classList.add('success-state'); inlineStatus.scrollIntoView({behavior:'smooth',block:'center'}); } else { inlineStatus.scrollIntoView({behavior:'smooth',block:'center'}); } }
       form?.addEventListener('submit', async (event) => {
         event.preventDefault();
         const data = new FormData(form);
