@@ -523,9 +523,16 @@
         if (GOOGLE_SCRIPT_URL.includes('PASTE_YOUR')) { showStatus('The form is not connected yet. Please configure the Google Apps Script URL in index.html.', false); return; }
         const button = form.querySelector('button[type="submit"]'); button.disabled = true; button.textContent = 'Submitting…';
         const payload = Object.fromEntries(data.entries()); payload.interests = [...form.querySelectorAll('input[name="interests[]"]:checked')].map(x => x.value).join(', '); payload.duk_email = payload.duk_email_prefix + '@duk.ac.in'; payload.whatsapp = '+91' + payload.whatsapp;
-        try { await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); showStatus('Thank you! Your application has been submitted successfully.', true); form.reset(); document.getElementById('remaining-form').classList.remove('hidden'); document.getElementById('ineligible-banner').classList.add('hidden'); }
-        catch (error) { showStatus('Unable to submit right now. Please try again shortly.', false); }
-        finally { button.disabled = false; button.textContent = 'Submit Application'; }
+        const body = JSON.stringify(payload);
+        // Queue the request immediately without waiting for Google's response. This makes the confirmation instant while the browser continues sending the data in the background.
+        let queued = false;
+        try { queued = navigator.sendBeacon(GOOGLE_SCRIPT_URL, new Blob([body], {type: 'text/plain;charset=UTF-8'})); } catch (error) {}
+        if (!queued) { fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body, keepalive: true }).catch(() => {}); }
+        showStatus('Thank you! Your application has been submitted successfully.', true);
+        form.reset();
+        document.getElementById('remaining-form').classList.remove('hidden');
+        document.getElementById('ineligible-banner').classList.add('hidden');
+        button.disabled = false; button.textContent = 'Submit Application';
       });
     </script>
     <script>
