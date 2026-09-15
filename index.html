@@ -492,13 +492,27 @@
     </footer>
 
 
-    <div id="form-status" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] max-w-xl w-[calc(100%-2rem)] rounded-2xl px-5 py-4 text-sm font-semibold shadow-2xl" role="status" aria-live="polite"></div>
+    <div id="form-status" class="hidden" role="status" aria-live="polite"></div>
+    <div id="confirmation-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm px-4" role="dialog" aria-modal="true" aria-labelledby="confirmation-title">
+        <div class="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-2xl border border-slate-100">
+            <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-3xl text-emerald-600">✓</div>
+            <h3 id="confirmation-title" class="text-2xl font-extrabold text-slate-900">Application Submitted</h3>
+            <p id="confirmation-message" class="mt-3 text-sm leading-6 text-slate-600">Thank you! Your application has been submitted successfully.</p>
+            <button id="confirmation-close" type="button" class="mt-7 w-full rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3.5 font-bold text-white shadow-lg shadow-blue-500/20 transition hover:-translate-y-0.5 hover:from-blue-500 hover:to-indigo-500">Close</button>
+        </div>
+    </div>
     <script>
       const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwzhEWRe7wSStrBMx7ZB4W6YN2gqchh943t3SxN_qsCTWELUKEQIcn4cNI11FeYEKv33A/exec';
       const form = document.getElementById('application-form');
       const statusBox = document.getElementById('form-status');
       const inlineStatus = document.getElementById('form-status-inline');
-      function showStatus(message, success) { const cls = success ? 'bg-emerald-100 border border-emerald-300 text-emerald-900' : 'bg-red-100 border border-red-300 text-red-900'; statusBox.textContent = message; statusBox.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] max-w-xl w-[calc(100%-2rem)] rounded-2xl px-5 py-4 text-sm font-semibold shadow-2xl ' + (success ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'); inlineStatus.textContent = message; inlineStatus.className = 'visible rounded-2xl px-5 py-4 text-sm font-semibold ' + cls; inlineStatus.scrollIntoView({behavior:'smooth',block:'center'}); }
+      const confirmationModal = document.getElementById('confirmation-modal');
+      const confirmationMessage = document.getElementById('confirmation-message');
+      const confirmationClose = document.getElementById('confirmation-close');
+      function closeConfirmation() { confirmationModal.classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
+      confirmationClose.addEventListener('click', closeConfirmation);
+      confirmationModal.addEventListener('click', (event) => { if (event.target === confirmationModal) closeConfirmation(); });
+      function showStatus(message, success) { const cls = success ? 'bg-emerald-100 border border-emerald-300 text-emerald-900' : 'bg-red-100 border border-red-300 text-red-900'; statusBox.textContent = message; statusBox.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] max-w-xl w-[calc(100%-2rem)] rounded-2xl px-5 py-4 text-sm font-semibold shadow-2xl ' + (success ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'); inlineStatus.textContent = message; inlineStatus.className = 'visible rounded-2xl px-5 py-4 text-sm font-semibold ' + cls; if (success) { confirmationMessage.textContent = message; confirmationModal.classList.remove('hidden'); document.body.classList.add('overflow-hidden'); confirmationClose.focus(); } else { inlineStatus.scrollIntoView({behavior:'smooth',block:'center'}); } }
       form?.addEventListener('submit', async (event) => {
         event.preventDefault();
         const data = new FormData(form);
