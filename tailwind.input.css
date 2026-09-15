@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { font-family: 'Plus Jakarta Sans', sans-serif; }
+}
+
+@layer components {
+  .heading { font-family: 'Space Grotesk', sans-serif; }
+  .gradient { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+  .warm { background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+}
